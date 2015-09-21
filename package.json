@@ -1,6 +1,6 @@
 {
   "name": "bole-stream",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Stream data into a bole logger",
   "main": "index.js",
   "scripts": {

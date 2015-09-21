@@ -5,9 +5,9 @@
 [![Downloads][downloads-image]][downloads-url]
 [![js-standard-style][standard-image]][standard-url]
 
-Stream data into a bole logger. Allows fine grained control over what is logged
-from a stream. Works exceptionally well in conjunction with
-[http-ndjson](https://github.com/yoshuawuyts/http-ndjson).
+Stream data into a [bole](https://github.com/rvagg/bole) logger. Allows fine
+grained control over what is logged from a stream. Works exceptionally well in
+conjunction with [http-ndjson](https://github.com/yoshuawuyts/http-ndjson).
 
 ## Installation
 ```sh
@@ -38,6 +38,7 @@ following values:
 
 ## See Also
 - [http-ndjson](https://github.com/yoshuawuyts/http-ndjson)
+- [bole](https://github.com/rvagg/bole)
 
 ## License
 [MIT](https://tldrlegal.com/license/mit-license)

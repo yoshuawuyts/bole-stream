@@ -1,7 +1,7 @@
 const through = require('through2')
-// const ndjson = require('ndjson')
 const bole = require('bole')
-// const pump = require('pump')
+const json = require('JSONStream')
+const pump = require('pump')
 
 module.exports = boleStream
 
@@ -13,8 +13,11 @@ function boleStream (opts) {
   opts.level = opts.level || 'info'
   const logger = bole(opts.name)
 
-  return through({ objectMode: true }, function (chunk, enc, cb) {
+  const ts = json.parse()
+  const ws = through({ objectMode: true }, function (chunk, enc, cb) {
     logger[opts.level](chunk)
     cb()
   })
+
+  return pump(ts, ws)
 }

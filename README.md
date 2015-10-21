@@ -18,16 +18,13 @@ $ npm install bole-stream
 ```js
 const boleStream = require('bole-stream')
 const httpNdjson = require('http-ndjson')
-const json = require('JSONStream')
 const bole = require('bole')
 const http = require('http')
 
 bole.output({ level: 'info', stream: process.stdout })
 
 http.createServer((req, res) => {
-  httpNdjson(req, res)
-    .pipe(json.parse())
-    .pipe(boleStream({ level: 'info' }))
+  httpNdjson(req, res).pipe(boleStream({ level: 'info' }))
   res.end()
 }).listen()
 ```

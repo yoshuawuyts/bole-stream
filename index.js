@@ -19,5 +19,6 @@ function boleStream (opts) {
     cb()
   })
 
-  return pump(ts, ws)
+  pump(ts, ws)
+  return ts
 }

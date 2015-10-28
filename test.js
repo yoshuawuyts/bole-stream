@@ -22,7 +22,7 @@ test('accept a stream and log data', function (t) {
   })
 
   const ws = boleStream()
-  ws.write({ name: 'bar' })
+  ws.write(JSON.stringify({ name: 'bar' }) + '\n')
 })
 
 test('allow config', function (t) {
@@ -43,5 +43,5 @@ test('allow config', function (t) {
   })
 
   const ws = boleStream({ name: 'aaah', level: 'error' })
-  ws.write({ foo: 'bar' })
+  ws.write(JSON.stringify({ foo: 'bar' }) + '\n')
 })

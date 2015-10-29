@@ -31,10 +31,15 @@ http.createServer((req, res) => {
 
 ## API
 ### writeStream = boleStream(opts)
-Create a new Bole writestream (instanceof `through2`). `opts` can contain the
-following values:
-- __name__: the default log name
+Create a new Bole writestream. `opts` can contain the following values:
+- __name__: the default log name (defaults to `bole`)
 - __level__: the log level. Can be one of `debug`, `info`, `warn` and `error`
+
+### boleStream.obj(opts)
+`{ objectMode: true }` shorthand.
+
+### writeStream.destroy(err?)
+Close the stream manually.
 
 ## See Also
 - [http-ndjson](https://github.com/yoshuawuyts/http-ndjson)

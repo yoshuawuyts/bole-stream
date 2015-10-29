@@ -1,24 +1,52 @@
-const through = require('through2')
+const stream = require('readable-stream')
+const assert = require('assert')
 const bole = require('bole')
-const json = require('JSONStream')
-const pump = require('pump')
+const util = require('util')
 
-module.exports = boleStream
+module.exports = BoleStream
 
-// Stream data into a bole logger
-// obj -> null
-function boleStream (opts) {
+// create a new bole stream
+// obj -> wstream
+function BoleStream (opts) {
+  if (!(this instanceof BoleStream)) return new BoleStream(opts)
+
   opts = opts || {}
-  opts.name = opts.name || 'bole'
-  opts.level = opts.level || 'info'
-  const logger = bole(opts.name)
+  assert.equal(typeof opts, 'object', 'is object')
 
-  const ts = json.parse()
-  const ws = through({ objectMode: true }, function (chunk, enc, cb) {
-    logger[opts.level](chunk)
+  // initialize default Writable properties
+  stream.Writable.call(this, opts)
+
+  // initialize custom properties
+  this.destroyed = false
+  this.level = opts.level || 'info'
+  this.log = bole(opts.name || 'bole')
+}
+
+// inherit Writable methods
+util.inherits(BoleStream, stream.Writable)
+
+// object mode shorthand
+// obj -> wstream
+BoleStream.prototype.obj = function (opts) {
+  opts = opts || {}
+  assert.equal(typeof opts, 'object', 'is object')
+  opts.objectMode = true
+  return new BoleStream(opts)
+}
+
+// process new data
+// (any, str, fn) -> wstream
+BoleStream.prototype._write = function (chunk, enc, cb) {
+  if (this._writableState.objectMode) {
+    this.log[this.level](chunk)
+    return cb()
+  }
+
+  try {
+    const obj = JSON.parse(String(chunk))
+    this.log[this.level](obj)
     cb()
-  })
-
-  pump(ts, ws)
-  return ts
+  } catch (e) {
+    cb(e)
+  }
 }

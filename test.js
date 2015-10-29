@@ -1,47 +1,52 @@
+const stream = require('readable-stream')
 const ndjson = require('ndjson')
 const bole = require('bole')
 const test = require('tape')
-const bl = require('bl')
 
 const boleStream = require('./')
 
 test('accept a stream and log data', function (t) {
-  t.plan(3)
+  t.plan(4)
 
-  const buf = bl()
-  buf.on('data', function (data) {
-    const obj = JSON.parse(String(data))
-    t.equal(typeof obj, 'object')
-    t.equal(obj.level, 'info')
-    t.equal(obj.name, 'bar')
-  })
-
-  bole.output({
-    level: 'info',
-    stream: ndjson.parse().pipe(buf)
-  })
-
+  const rs = ndjson.serialize()
   const ws = boleStream()
-  ws.write(JSON.stringify({ name: 'bar' }) + '\n')
+  rs.pipe(ws)
+
+  bole.output({ level: 'info', stream: testSink() })
+  rs.end({ foo: 'bar' })
+
+  function testSink () {
+    return new stream.Writable({
+      write: function (data) {
+        const obj = JSON.parse(String(data))
+        t.equal(typeof obj, 'object', 'type')
+        t.equal(obj.level, 'info', 'level')
+        t.equal(obj.name, 'bole', 'name')
+        t.equal(obj.foo, 'bar', 'property')
+      }
+    })
+  }
 })
 
 test('allow config', function (t) {
   t.plan(4)
 
-  const buf = bl()
-  buf.on('data', function (data) {
-    const obj = JSON.parse(String(data))
-    t.equal(typeof obj, 'object')
-    t.equal(obj.level, 'error')
-    t.equal(obj.name, 'aaah')
-    t.equal(obj.foo, 'bar')
-  })
-
-  bole.output({
-    level: 'info',
-    stream: ndjson.parse().pipe(buf)
-  })
-
+  const rs = ndjson.serialize()
   const ws = boleStream({ name: 'aaah', level: 'error' })
-  ws.write(JSON.stringify({ foo: 'bar' }) + '\n')
+  rs.pipe(ws)
+
+  bole.output({ level: 'info', stream: testSink() })
+  rs.end({ foo: 'bar' })
+
+  function testSink () {
+    return new stream.Writable({
+      write: function (data) {
+        const obj = JSON.parse(String(data))
+        t.equal(typeof obj, 'object')
+        t.equal(obj.level, 'error')
+        t.equal(obj.name, 'aaah')
+        t.equal(obj.foo, 'bar')
+      }
+    })
+  }
 })
